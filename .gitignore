@@ -1,0 +1,4 @@
+# git ignore
+
+#have to gitignore the data directory since the fasta file with the sequences is WAY too large to push to github.
+data/*

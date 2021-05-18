@@ -1,0 +1,28 @@
+name: humboldt-analysis
+channels:
+- bioconda
+- defaults
+- conda-forge
+dependencies:
+- cvxopt
+- fasttree
+- iqtree
+- mafft
+- pandas
+- python=3*
+- nodejs=10
+- raxml
+- vcftools
+- git
+- pip
+- conda
+- ipykernel
+- notebook
+- fonttools
+- matplotlib
+- numpy
+- pandas
+- cartopy
+- pip:
+  - nextstrain-augur
+  - nextstrain-cli

@@ -1,0 +1,97 @@
+## DEFINE BUILDS THAT WE WANT AUGUR TO RUN
+## I want a California-focused build that looks at CA dynamics broadly, 
+## and also a Humboldt county focused build.
+
+use_nextalign: true
+genes: ["ORF1a", "ORF1b", "S", "ORF3a", "M", "N"]
+
+builds:
+  # first we'll define a state-level build, focused on California.
+  # subsampling schemes that are referenced here are defined after the builds.
+  california:
+    subsampling_scheme: ca_subsamp #subsampling scheme defined below
+    region: North America
+    country: USA
+    division: California
+
+  humboldt:
+    subsampling_scheme: humboldt_subsamp # subsampling scheme defined below
+    region: North America
+    country: USA
+    division: California
+    location: Humboldt County
+
+
+## Now I define the subsampling schemes that will guide how contextual data 
+## are pulled in for each of these builds.
+subsampling:
+  ca_subsamp:
+    # Focal samples
+    division:
+      group_by: "location year month" #subsample from all californian counties (referred to as locations) one monthly cadence
+      max_sequences: 1500
+      exclude: "--exclude-where 'division!={division}'" #ensure these are calif samples
+    # Contextual samples from the rest of the United States
+    country:
+      group_by: "division year month" #subsample 
+      seq_per_group: 4
+      exclude: "--exclude-where 'division={division}' 'country!={country}'" # when grabbing samples from other parts of the US, make sure that we're not resampling from CA.
+      priorities:
+        type: "proximity"
+        focus: "division"
+    # Contextual samples from the rest of the world,
+    global:
+      group_by: "region year month"
+      seq_per_group: 4
+      exclude: "--exclude-where 'country={country}'" #don't resample United States samples
+      priorities:
+        type: "proximity"
+        focus: "division"
+
+  humboldt_subsamp:
+    # Focal samples
+    location:
+      group_by: "year month"
+      seq_per_group: 500 #set really high to ensure I get ALL of Humboldt's sequences
+      query: --query "(country == '{country}') & (division == '{division}') & (location == '{location}')"
+    # Contextual samples from California
+    division:
+      group_by: "year month"
+      seq_per_group: 50
+      exclude: "--exclude-where 'location={location}' 'division!={division}'" #make sure we're grabbing Californian samples from counties other than Humboldt.
+      priorities:
+        type: "proximity"
+        focus: "location"
+    # Contextual samples from all other states in USA except California
+    country:
+      group_by: "year month"
+      seq_per_group: 50
+      exclude: "--exclude-where 'division={division}' 'country!={country}'"
+      priorities:
+        type: "proximity"
+        focus: "location"
+    # Contextual samples from the rest of the world
+    global:
+      group_by: "region year month"
+      seq_per_group: 5
+      exclude: "--exclude-where 'country={country}'" #do not resample USA
+      priorities:
+        type: "proximity"
+        focus: "location"
+        
+        
+        
+        
+### Specify which discrete traits to reconstruct at ancestors for the two different builds
+traits:
+    humboldt:
+        sampling_bias_correction: 2.5
+        columns: ["location", "division"] ### note that these must match column names in metadata.tsv
+
+    california:
+        sampling_bias_correction: 2.5
+        columns: ["location", "division"]
+
+files:
+  auspice_config: "my_profiles/humboldt/my_auspice_config.json"
+  description: "my_profiles/humboldt/my_description.md"

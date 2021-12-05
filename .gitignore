@@ -14,3 +14,6 @@ bmc-ph-resubmission/
 
 #ignore some of the epi data that is de-identified but can't be publicly shared
 metadata-overlay-files/
+
+#ignore ipython annoyingness
+analysis-scripts/.ipynb_checkpoints/

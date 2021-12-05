@@ -2,3 +2,15 @@
 
 #have to gitignore the data directory since the fasta file with the sequences is WAY too large to push to github.
 data/*
+
+
+#ignore some intermediate files that don't really matter to push up.
+analysis-scripts/intro*.fasta
+
+#ignore the folders that organize the files for the submissions to journals.
+medrxiv-submission/
+bmc-ph-submission/
+bmc-ph-resubmission/
+
+#ignore some of the epi data that is de-identified but can't be publicly shared
+metadata-overlay-files/
